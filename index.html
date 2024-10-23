@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule Engine</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Rule Engine</h1>
+
+    <form id="create-rule-form">
+        <label for="rule">Enter Rule:</label>
+        <input type="text" id="rule" name="rule">
+        <button type="submit">Create Rule</button>
+    </form>
+
+    <form id="evaluate-rule-form">
+        <label for="user_data">Enter User Data (JSON):</label>
+        <textarea id="user_data" name="user_data"></textarea>
+        <label for="rule_id">Enter Rule ID:</label>
+        <input type="text" id="rule_id" name="rule_id">
+        <button type="submit">Evaluate Rule</button>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Handle create rule form submission
+        $('#create-rule-form').on('submit', function(event) {
+            event.preventDefault();
+            const rule = $('#rule').val();
+
+            $.ajax({
+                url: '/create_rule',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ rule: rule }),
+                success: function(response) {
+                    alert('Rule created: ' + JSON.stringify(response));
+                },
+                error: function(error) {
+                    alert('Error: ' + JSON.stringify(error));
+                }
+            });
+        });
+
+        // Handle evaluate rule form submission
+        $('#evaluate-rule-form').on('submit', function(event) {
+            event.preventDefault();
+            const userData = $('#user_data').val();
+            const ruleId = $('#rule_id').val();
+
+            $.ajax({
+                url: '/evaluate_rule',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ user_data: JSON.parse(userData), rule_id: ruleId }),
+                success: function(response) {
+                    alert('Evaluation Result: ' + response.result);
+                },
+                error: function(error) {
+                    alert('Error: ' + JSON.stringify(error));
+                }
+            });
+        });
+    </script>
+</body>
+</html>
